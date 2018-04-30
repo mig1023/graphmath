@@ -1,0 +1,26 @@
+﻿<Window x:Class="graph.math.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:graph.math"
+        mc:Ignorable="d"
+        Title="graph.math" Height="422.059" Width="878.86">
+    <Grid Background="#FF2D2D30">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Background="#FF333333">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition MinWidth="300" Width="300"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="2"
+                      VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="#FF007ACC"></GridSplitter>
+            <Canvas x:Name="graphPlace" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged"/>
+            <TextBox x:Name="graphText" Grid.Column="2" HorizontalAlignment="Stretch" Height="173" Margin="10,59,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="#FF3E3E42" BorderBrush="{x:Null}"/>
+        </Grid>
+    </Grid>
+</Window>
