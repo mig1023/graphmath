@@ -23,7 +23,7 @@ namespace graph.math
             InitializeComponent();
         }
 
-        void graphPlaceBackground()
+        void graphPlaceBackground(int scale)
         {
             var width = graphPlace.ActualWidth;
             var height = graphPlace.ActualHeight;
@@ -33,14 +33,14 @@ namespace graph.math
 
             graphPlace.Children.Clear();
 
-            for (int x = 10; x < width; x += 10)
-                if ((x > wcenter) && (x < wcenter + 10))
+            for (int x = scale; x < width; x += scale)
+                if ((x >= wcenter) && (x < wcenter + scale))
                     AddLineToBackground(x, 0, x, height, true);
                 else
                     AddLineToBackground(x, 0, x, height);
 
-            for (int y = 10; y < height; y += 10)
-                if ((y > hcenter) && (y <hcenter + 10) )
+            for (int y = scale; y < height; y += scale)
+                if ((y > hcenter) && (y <hcenter + scale) )
                     AddLineToBackground(0, y, width, y, true);
                 else
                     AddLineToBackground(0, y, width, y);
@@ -54,7 +54,7 @@ namespace graph.math
                 Y1 = y1,
                 X2 = x2,
                 Y2 = y2,
-                Stroke = Brushes.DarkGray,
+                Stroke = (coordinate ? Brushes.SkyBlue : Brushes.DarkGray ),
                 StrokeThickness = (coordinate ? 2 : 1),
                 SnapsToDevicePixels = true
             };
@@ -64,12 +64,17 @@ namespace graph.math
 
         private void graphPlace_Loaded(object sender, RoutedEventArgs e)
         {
-            graphPlaceBackground();
+            graphPlaceBackground((int)graphScale.Value);
         }
 
         private void graphPlace_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            graphPlaceBackground();
+            graphPlaceBackground((int)graphScale.Value);
+        }
+
+        private void graphScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            graphPlaceBackground((int)graphScale.Value);
         }
     }
 }
