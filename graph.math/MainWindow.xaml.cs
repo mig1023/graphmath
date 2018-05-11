@@ -32,15 +32,14 @@ namespace graph.math
         private double getXPoint(double xPoint)
         {
             double width = graphPlace.ActualWidth;
-            double wcenter = moveX + (width / 2);
+            double wCenter = moveX + (width / 2);
             int scale = (int)graphScale.Value;
-            int centerPoint = 0;
+            double xMargin = wCenter % scale;
+            double centerPoint = 0;
 
-            for (int x = scale; x < width; x += scale)
-                if ((x >= wcenter) && (x < wcenter + scale))
-                {
+            for (double x = xMargin; x < width; x += scale)
+                if ((x >= wCenter) && (x < wCenter + scale))
                     centerPoint = x;
-                }
 
             double newPoint = centerPoint + (xPoint * scale);
 
@@ -50,15 +49,14 @@ namespace graph.math
         private double getYPoint(double yPoint)
         {
             double height = graphPlace.ActualHeight;
-            double hcenter = moveY + (height / 2);
+            double hCenter = moveY + (height / 2);
             int scale = (int)graphScale.Value;
-            int centerPoint = 0;
+            double yMargin = hCenter % scale;
+            double centerPoint = 0;
 
-            for (int x = scale; x < height; x += scale)
-                if ((x >= hcenter) && (x < hcenter + scale))
-                {
+            for (double x = yMargin; x < height; x += scale)
+                if ((x >= hCenter) && (x < hCenter + scale))
                     centerPoint = x;
-                }
 
             double newPoint = centerPoint - (yPoint * scale);
 
@@ -98,19 +96,22 @@ namespace graph.math
             var width = graphPlace.ActualWidth;
             var height = graphPlace.ActualHeight;
             
-            double wcenter = moveX + ( width / 2 ); 
-            double hcenter = moveY + ( height / 2 );
+            double wCenter = moveX + ( width / 2 ); 
+            double hCenter = moveY + ( height / 2 );
+
+            double xMargin = wCenter % scale;
+            double yMargin = hCenter % scale;
 
             graphPlace.Children.Clear();
 
-            for (int x = scale; x < width; x += scale)
-                if ((x >= wcenter) && (x < wcenter + scale))
+            for (double x = xMargin; x < width; x += scale)
+                if ((x >= wCenter) && (x < wCenter + scale))
                     drawLineAbsolute(x, 0, x, height, Brushes.SkyBlue);
                 else
                     drawLineAbsolute(x, 0, x, height, Brushes.DimGray);
 
-            for (int y = scale; y < height; y += scale)
-                if ((y > hcenter) && (y <hcenter + scale))
+            for (double y = yMargin; y < height; y += scale)
+                if ((y >= hCenter) && (y < hCenter + scale))
                     drawLineAbsolute(0, y, width, y, Brushes.SkyBlue);
                 else
                     drawLineAbsolute(0, y, width, y, Brushes.DimGray);
@@ -162,6 +163,12 @@ namespace graph.math
         }
 
         private void graphPlace_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            moveGraphPlace = false;
+        }
+
+        private void graphPlace_MouseLeave(object sender, MouseEventArgs e)
         {
             Mouse.Capture(null);
             moveGraphPlace = false;
