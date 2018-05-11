@@ -18,6 +18,12 @@ namespace graph.math
 {
     public partial class MainWindow : Window
     {
+        Point p;
+        bool moveGraphPlace = false;
+        bool graphDrawAlready = false;
+        double moveX = 0;
+        double moveY = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -26,7 +32,7 @@ namespace graph.math
         private double getXPoint(double xPoint)
         {
             double width = graphPlace.ActualWidth;
-            double wcenter = width / 2;
+            double wcenter = moveX + (width / 2);
             int scale = (int)graphScale.Value;
             int centerPoint = 0;
 
@@ -44,7 +50,7 @@ namespace graph.math
         private double getYPoint(double yPoint)
         {
             double height = graphPlace.ActualHeight;
-            double hcenter = height / 2;
+            double hcenter = moveY + (height / 2);
             int scale = (int)graphScale.Value;
             int centerPoint = 0;
 
@@ -92,8 +98,8 @@ namespace graph.math
             var width = graphPlace.ActualWidth;
             var height = graphPlace.ActualHeight;
             
-            double wcenter = width / 2; 
-            double hcenter = height / 2;
+            double wcenter = moveX + ( width / 2 ); 
+            double hcenter = moveY + ( height / 2 );
 
             graphPlace.Children.Clear();
 
@@ -101,13 +107,13 @@ namespace graph.math
                 if ((x >= wcenter) && (x < wcenter + scale))
                     drawLineAbsolute(x, 0, x, height, Brushes.SkyBlue);
                 else
-                    drawLineAbsolute(x, 0, x, height, Brushes.DarkGray);
+                    drawLineAbsolute(x, 0, x, height, Brushes.DimGray);
 
             for (int y = scale; y < height; y += scale)
                 if ((y > hcenter) && (y <hcenter + scale))
                     drawLineAbsolute(0, y, width, y, Brushes.SkyBlue);
                 else
-                    drawLineAbsolute(0, y, width, y, Brushes.DarkGray);
+                    drawLineAbsolute(0, y, width, y, Brushes.DimGray);
         }
 
         private void graphPlace_Loaded(object sender, RoutedEventArgs e)
@@ -118,14 +124,50 @@ namespace graph.math
         private void graphPlace_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             graphPlaceBackground((int)graphScale.Value);
+            if (graphDrawAlready) primitiveExample();
         }
 
         private void graphScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             graphPlaceBackground((int)graphScale.Value);
+            if (graphDrawAlready) primitiveExample();
         }
 
         private void buttonPlay_Click(object sender, RoutedEventArgs e)
+        {
+            primitiveExample();
+            graphDrawAlready = true;
+        }
+
+        private void graphPlace_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Control c = sender as Control;
+            Mouse.Capture(c);
+            p = Mouse.GetPosition(c);
+            moveGraphPlace = true;
+        }
+
+        private void graphPlace_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (moveGraphPlace)
+            {
+                Control c = sender as Control;
+
+                moveX = e.GetPosition(null).X - p.X;
+                moveY = e.GetPosition(null).Y - p.Y;
+
+                graphPlaceBackground((int)graphScale.Value);
+                if (graphDrawAlready) primitiveExample();
+            }
+        }
+
+        private void graphPlace_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            moveGraphPlace = false;
+        }
+
+        private void primitiveExample()
         {
             drawLine(0, 0, 5, 5, Brushes.Yellow);
             drawLine(0, 0, -5, 5, Brushes.Red, 2);
