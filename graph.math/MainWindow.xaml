@@ -19,7 +19,7 @@
 
             <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="2"
                       VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="#FF007ACC"></GridSplitter>
-            <Canvas x:Name="graphPlace" Grid.Row="0" Cursor="Hand" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF333333" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged" MouseDown="graphPlace_MouseDown" MouseMove="graphPlace_MouseMove" MouseUp="graphPlace_MouseUp" MouseLeave="graphPlace_MouseLeave"/>
+            <Canvas x:Name="graphPlace" ClipToBounds="True" Grid.Row="0" Cursor="Hand" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF333333" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged" MouseDown="graphPlace_MouseDown" MouseMove="graphPlace_MouseMove" MouseUp="graphPlace_MouseUp" MouseLeave="graphPlace_MouseLeave"/>
             <TextBox x:Name="graphText" Grid.Column="2" HorizontalAlignment="Stretch" Height="173" Margin="10,59,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="#FF3E3E42" BorderBrush="{x:Null}"/>
             <Slider x:Name="graphScale" Grid.Column="2" Maximum="100" Minimum="1" Value="10" TickFrequency="100" TickPlacement="BottomRight" Margin="10,257,10,86" Foreground="#FF3E3E42" Background="{x:Null}" ValueChanged="graphScale_ValueChanged"/>
             <DockPanel Grid.Column="2" HorizontalAlignment="Stretch" Height="32" LastChildFill="False" Margin="10,22,10,0" VerticalAlignment="Top" >

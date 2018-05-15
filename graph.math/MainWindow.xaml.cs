@@ -176,10 +176,14 @@ namespace graph.math
 
         private void primitiveExample()
         {
-            drawLine(0, 0, 5, 5, Brushes.Yellow);
-            drawLine(0, 0, -5, 5, Brushes.Red, 2);
-            drawLine(0, 0, -5, -5, Brushes.Green, 3);
-            drawLine(0, 0, 5, -5, Brushes.Blue, 4);
+            Random rand = new Random();
+
+            for(int a = -17; a < 15; a++)
+                for(int b = 17; b > -15; b--)
+                    {
+                        drawLine(0, 0, a, b, Brushes.Red);
+                        drawLine(0, 0, b, a, Brushes.Green);
+                    }
         }
     }
 }
