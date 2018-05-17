@@ -21,46 +21,37 @@ namespace graph.math
         Point p;
         bool moveGraphPlace = false;
         bool graphDrawAlready = false;
-        double moveX = 0;
-        double moveY = 0;
+        double xMove = 0;
+        double yMove = 0;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private double getXPoint(double xPoint)
+        private double getPoint(double xyPoint, double actualSize, double xyMove)
         {
-            double width = graphPlace.ActualWidth;
-            double wCenter = moveX + (width / 2);
+            double center = xyMove + (actualSize / 2);
             int scale = (int)graphScale.Value;
-            double xMargin = wCenter % scale;
             double centerPoint = 0;
 
-            for (double x = xMargin; x < width; x += scale)
-                if ((x >= wCenter) && (x < wCenter + scale))
+            for (double x = center % scale; x < actualSize; x += scale)
+                if ((x >= center) && (x < center + scale))
                     centerPoint = x;
 
-            double newPoint = centerPoint + (xPoint * scale);
+            double newPoint = centerPoint + (xyPoint * scale);
 
             return newPoint;
         }
 
+        private double getXPoint(double xPoint)
+        {
+            return getPoint(xPoint, graphPlace.ActualWidth, xMove);
+        }
+
         private double getYPoint(double yPoint)
         {
-            double height = graphPlace.ActualHeight;
-            double hCenter = moveY + (height / 2);
-            int scale = (int)graphScale.Value;
-            double yMargin = hCenter % scale;
-            double centerPoint = 0;
-
-            for (double x = yMargin; x < height; x += scale)
-                if ((x >= hCenter) && (x < hCenter + scale))
-                    centerPoint = x;
-
-            double newPoint = centerPoint - (yPoint * scale);
-
-            return newPoint;
+            return getPoint(yPoint, graphPlace.ActualHeight, yMove);
         }
 
         private void drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
@@ -96,8 +87,8 @@ namespace graph.math
             var width = graphPlace.ActualWidth;
             var height = graphPlace.ActualHeight;
             
-            double wCenter = moveX + ( width / 2 ); 
-            double hCenter = moveY + ( height / 2 );
+            double wCenter = xMove + ( width / 2 ); 
+            double hCenter = yMove + ( height / 2 );
 
             double xMargin = wCenter % scale;
             double yMargin = hCenter % scale;
@@ -105,39 +96,50 @@ namespace graph.math
             graphPlace.Children.Clear();
 
             for (double x = xMargin; x < width; x += scale)
-                if ((x >= wCenter) && (x < wCenter + scale))
-                    drawLineAbsolute(x, 0, x, height, Brushes.SkyBlue);
-                else
-                    drawLineAbsolute(x, 0, x, height, Brushes.DimGray);
+            {
+                Brush color = ((x >= wCenter) && (x < wCenter + scale) ? Brushes.SkyBlue : Brushes.DimGray);
+                drawLineAbsolute(x, 0, x, height, color);
+            }
 
             for (double y = yMargin; y < height; y += scale)
-                if ((y >= hCenter) && (y < hCenter + scale))
-                    drawLineAbsolute(0, y, width, y, Brushes.SkyBlue);
-                else
-                    drawLineAbsolute(0, y, width, y, Brushes.DimGray);
+            {
+                Brush color = ((y >= hCenter) && (y < hCenter + scale) ? Brushes.SkyBlue : Brushes.DimGray);
+                drawLineAbsolute(0, y, width, y, color);
+            }
+        }
+
+        private void graphPlaceReDraw()
+        {
+            graphPlaceBackground((int)graphScale.Value);
+            if (graphDrawAlready) primitiveExample();
         }
 
         private void graphPlace_Loaded(object sender, RoutedEventArgs e)
         {
-            graphPlaceBackground((int)graphScale.Value);
+            graphPlaceReDraw();
         }
 
         private void graphPlace_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            graphPlaceBackground((int)graphScale.Value);
-            if (graphDrawAlready) primitiveExample();
+            graphPlaceReDraw();
         }
 
         private void graphScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            graphPlaceBackground((int)graphScale.Value);
-            if (graphDrawAlready) primitiveExample();
+            graphPlaceReDraw();
         }
 
         private void buttonPlay_Click(object sender, RoutedEventArgs e)
         {
-            primitiveExample();
             graphDrawAlready = true;
+            graphPlaceReDraw();
+        }
+
+        private void buttonClear_Click(object sender, RoutedEventArgs e)
+        {
+            graphPlace.Children.Clear();
+            graphPlaceBackground((int)graphScale.Value);
+            graphDrawAlready = false;
         }
 
         private void graphPlace_MouseDown(object sender, MouseButtonEventArgs e)
@@ -154,8 +156,8 @@ namespace graph.math
             {
                 Control c = sender as Control;
 
-                moveX = e.GetPosition(null).X - p.X;
-                moveY = e.GetPosition(null).Y - p.Y;
+                xMove = e.GetPosition(null).X - p.X;
+                yMove = e.GetPosition(null).Y - p.Y;
 
                 graphPlaceBackground((int)graphScale.Value);
                 if (graphDrawAlready) primitiveExample();
