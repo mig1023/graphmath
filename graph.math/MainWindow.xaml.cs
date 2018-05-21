@@ -29,29 +29,41 @@ namespace graph.math
             InitializeComponent();
         }
 
-        private double getPoint(double xyPoint, double actualSize, double xyMove)
+        private double getPoint(double xyPoint, double actualSize, double xyMove, bool isY)
         {
             double center = xyMove + (actualSize / 2);
             int scale = (int)graphScale.Value;
+
             double centerPoint = 0;
+            double newPoint;
 
             for (double x = center % scale; x < actualSize; x += scale)
                 if ((x >= center) && (x < center + scale))
                     centerPoint = x;
 
-            double newPoint = centerPoint + (xyPoint * scale);
+            newPoint = centerPoint + ((xyPoint * scale) * (isY ? 1 : -1));
 
             return newPoint;
         }
 
         private double getXPoint(double xPoint)
         {
-            return getPoint(xPoint, graphPlace.ActualWidth, xMove);
+            return getPoint(
+                xyPoint: xPoint,
+                actualSize: graphPlace.ActualWidth,
+                xyMove: xMove,
+                isY: true
+            );
         }
 
         private double getYPoint(double yPoint)
         {
-            return getPoint(yPoint, graphPlace.ActualHeight, yMove);
+            return getPoint(
+                xyPoint: yPoint,
+                actualSize: graphPlace.ActualHeight,
+                xyMove: yMove,
+                isY: false
+            );
         }
 
         private void drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
@@ -80,6 +92,36 @@ namespace graph.math
             };
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             graphPlace.Children.Add(line);
+        }
+
+        string[] parseGraphText()
+        {
+            return graphText.Text.Split('\n');
+        }
+
+        void drawAlgorithmLine(string algorithmLine)
+        {
+            if (algorithmLine.IndexOf("line") > -1)
+            {
+                int start = algorithmLine.IndexOf('(')+1;
+                int end = algorithmLine.IndexOf(')')-algorithmLine.IndexOf('(')-1;
+
+                String paramLine = algorithmLine.Substring(start, end);
+
+                string[] paramLines = paramLine.Split(',');
+
+                int[] param = Array.ConvertAll(paramLines, n => int.Parse(n));
+
+                drawLine(param[0], param[1], param[2], param[3], Brushes.White);
+            }
+        }
+
+        void drawAlgorithm()
+        {
+            string[] algorithmLines = parseGraphText();
+
+            foreach(string algorithmLine in algorithmLines)
+                drawAlgorithmLine(algorithmLine);
         }
 
         void graphPlaceBackground(int scale)
@@ -111,7 +153,7 @@ namespace graph.math
         private void graphPlaceReDraw()
         {
             graphPlaceBackground((int)graphScale.Value);
-            if (graphDrawAlready) primitiveExample();
+            if (graphDrawAlready) drawAlgorithm();
         }
 
         private void graphPlace_Loaded(object sender, RoutedEventArgs e)
@@ -159,8 +201,7 @@ namespace graph.math
                 xMove = e.GetPosition(null).X - p.X;
                 yMove = e.GetPosition(null).Y - p.Y;
 
-                graphPlaceBackground((int)graphScale.Value);
-                if (graphDrawAlready) primitiveExample();
+                graphPlaceReDraw();
             }
         }
 
@@ -174,18 +215,6 @@ namespace graph.math
         {
             Mouse.Capture(null);
             moveGraphPlace = false;
-        }
-
-        private void primitiveExample()
-        {
-            Random rand = new Random();
-
-            for(int a = -17; a < 15; a++)
-                for(int b = 17; b > -15; b--)
-                    {
-                        drawLine(0, 0, a, b, Brushes.Red);
-                        drawLine(0, 0, b, a, Brushes.Green);
-                    }
         }
     }
 }
