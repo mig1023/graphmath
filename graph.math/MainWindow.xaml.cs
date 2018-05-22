@@ -19,6 +19,8 @@ namespace graph.math
     public partial class MainWindow : Window
     {
         Point p;
+        Brush hightlightText;
+
         bool moveGraphPlace = false;
         bool graphDrawAlready = false;
         double xMove = 0;
@@ -27,6 +29,7 @@ namespace graph.math
         public MainWindow()
         {
             InitializeComponent();
+            hightlightText = graphText.SelectionBrush;
         }
 
         private double getPoint(double xyPoint, double actualSize, double xyMove, bool isY)
@@ -99,29 +102,45 @@ namespace graph.math
             return graphText.Text.Split('\n');
         }
 
-        void drawAlgorithmLine(string algorithmLine)
+        void algorithmError(int start, int end)
+        {
+            graphText.SelectionBrush = Brushes.Red;
+            graphText.Focus();
+            graphText.Select(start, end);
+        }
+
+        bool drawAlgorithmLine(string algorithmLine)
         {
             if (algorithmLine.IndexOf("line") > -1)
             {
                 int start = algorithmLine.IndexOf('(')+1;
                 int end = algorithmLine.IndexOf(')')-algorithmLine.IndexOf('(')-1;
 
-                String paramLine = algorithmLine.Substring(start, end);
-
-                string[] paramLines = paramLine.Split(',');
+                string[] paramLines = algorithmLine.Substring(start, end).Split(',');
 
                 int[] param = Array.ConvertAll(paramLines, n => int.Parse(n));
 
+                if (param.Length < 4) return false;
+
                 drawLine(param[0], param[1], param[2], param[3], Brushes.White);
             }
+
+            return true;
         }
 
         void drawAlgorithm()
         {
             string[] algorithmLines = parseGraphText();
 
+            int currentLineStart = 0;
+
             foreach(string algorithmLine in algorithmLines)
-                drawAlgorithmLine(algorithmLine);
+            {
+                if (!drawAlgorithmLine(algorithmLine))
+                    algorithmError(currentLineStart, algorithmLine.Length);
+
+                currentLineStart += algorithmLine.Length + 1;
+            }
         }
 
         void graphPlaceBackground(int scale)
@@ -215,6 +234,11 @@ namespace graph.math
         {
             Mouse.Capture(null);
             moveGraphPlace = false;
+        }
+
+        private void graphText_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            graphText.SelectionBrush = hightlightText;
         }
     }
 }
