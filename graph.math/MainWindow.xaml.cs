@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Text.RegularExpressions;
 
 namespace graph.math
 {
@@ -116,7 +117,7 @@ namespace graph.math
                 int start = algorithmLine.IndexOf('(')+1;
                 int end = algorithmLine.IndexOf(')')-algorithmLine.IndexOf('(')-1;
 
-                string[] paramLines = algorithmLine.Substring(start, end).Split(',');
+                string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
 
                 int[] param = Array.ConvertAll(paramLines, n => int.Parse(n));
 
