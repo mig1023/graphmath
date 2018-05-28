@@ -165,6 +165,15 @@ namespace graph.math
                 drawPoint(param[0], param[1], Brushes.Red);
             }
 
+            if (algorithmLine.IndexOf("sine") > -1)
+            {
+                for (double x = -10; x < 10; x += 0.01)
+                {
+                    double y = Math.Sin(x);
+                    drawPoint(x, y, Brushes.White, 1);
+                }
+            }
+
             return true;
         }
 
