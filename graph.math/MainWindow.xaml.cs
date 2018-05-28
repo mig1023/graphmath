@@ -70,6 +70,31 @@ namespace graph.math
             );
         }
 
+        private void drawPoint(double x, double y, Brush color, int width = 2)
+        {
+            drawPointAbsolute(
+                x: getXPoint(x),
+                y: getYPoint(y),
+                color: color,
+                width: width
+           );
+        }
+
+        private void drawPointAbsolute(double x, double y, Brush color, int width = 2)
+        {
+            Point point = new Point(x, y);
+            Ellipse elipse = new Ellipse();
+
+            elipse.Width = width;
+            elipse.Height = width;
+
+            elipse.StrokeThickness = 2;
+            elipse.Stroke = color;
+            elipse.Margin = new Thickness(point.X - (width / 2), point.Y - (width / 2), 0, 0);
+
+            graphPlace.Children.Add(elipse);
+        }
+
         private void drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
         {
             drawLineAbsolute(
@@ -103,6 +128,16 @@ namespace graph.math
             return graphText.Text.Split('\n');
         }
 
+        int[] parseParam(string algorithmLine)
+        {
+            int start = algorithmLine.IndexOf('(') + 1;
+            int end = algorithmLine.IndexOf(')') - algorithmLine.IndexOf('(') - 1;
+
+            string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
+
+            return Array.ConvertAll(paramLines, n => int.Parse(n));
+        }
+
         void algorithmError(int start, int end)
         {
             graphText.SelectionBrush = Brushes.Red;
@@ -114,16 +149,20 @@ namespace graph.math
         {
             if (algorithmLine.IndexOf("line") > -1)
             {
-                int start = algorithmLine.IndexOf('(')+1;
-                int end = algorithmLine.IndexOf(')')-algorithmLine.IndexOf('(')-1;
+                int[] param = parseParam(algorithmLine);
 
-                string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
-
-                int[] param = Array.ConvertAll(paramLines, n => int.Parse(n));
-
-                if (param.Length < 4) return false;
+                if (param.Length != 4) return false;
 
                 drawLine(param[0], param[1], param[2], param[3], Brushes.White);
+            }
+
+            if (algorithmLine.IndexOf("point") > -1)
+            {
+                int[] param = parseParam(algorithmLine);
+
+                if (param.Length != 2) return false;
+
+                drawPoint(param[0], param[1], Brushes.Red);
             }
 
             return true;
