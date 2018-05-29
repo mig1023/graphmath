@@ -22,6 +22,8 @@ namespace graph.math
         Point p;
         Brush hightlightText;
 
+        delegate double simpleFunction(double x);
+
         bool moveGraphPlace = false;
         bool graphDrawAlready = false;
         double xMove = 0;
@@ -33,12 +35,14 @@ namespace graph.math
             hightlightText = graphText.SelectionBrush;
         }
 
-        private int getValueMax(bool negativeNumber = false)
+        private int getValueMax(bool negativeNumber = false, bool isY = false)
         {
             int scale = (int)graphScale.Value;
-            double size = graphPlace.ActualWidth;
+            double size = ( isY ? graphPlace.ActualHeight : graphPlace.ActualWidth );
 
             int centerPoint = (int)(getCenter(size, xMove) / scale);
+
+            if (isY) negativeNumber = !negativeNumber;
 
             if (!negativeNumber)
                 return (int)(size / scale) - centerPoint;
@@ -89,17 +93,19 @@ namespace graph.math
             );
         }
 
-        private void drawPoint(double x, double y, Brush color, int width = 2)
+        private bool drawPoint(double x, double y, Brush color, int width = 2)
         {
             drawPointAbsolute(
                 x: getXPoint(x),
                 y: getYPoint(y),
                 color: color,
                 width: width
-           );
+            );
+
+            return true;
         }
 
-        private void drawPointAbsolute(double x, double y, Brush color, int width = 2)
+        private bool drawPointAbsolute(double x, double y, Brush color, int width = 2)
         {
             Point point = new Point(x, y);
             Ellipse elipse = new Ellipse();
@@ -112,9 +118,11 @@ namespace graph.math
             elipse.Margin = new Thickness(point.X - (width / 2), point.Y - (width / 2), 0, 0);
 
             graphPlace.Children.Add(elipse);
+
+            return true;
         }
 
-        private void drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
+        private bool drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
         {
             drawLineAbsolute(
                 x1: getXPoint(x1),
@@ -123,10 +131,12 @@ namespace graph.math
                 y2: getYPoint(y2),
                 color: color,
                 width: width
-           );
+            );
+
+            return true;
         }
 
-        private void drawLineAbsolute(double x1, double y1, double x2, double y2, Brush color, int width = 1)
+        private bool drawLineAbsolute(double x1, double y1, double x2, double y2, Brush color, int width = 1)
         {
             var line = new Line()
             {
@@ -140,6 +150,8 @@ namespace graph.math
             };
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             graphPlace.Children.Add(line);
+
+            return true;
         }
 
         string[] parseGraphText()
@@ -166,6 +178,20 @@ namespace graph.math
             graphText.Select(start, end);
         }
 
+        bool drawSimpleFuntion(simpleFunction function, int[] param)
+        {
+            if (param.Length == 0)
+                for (double x = getValueMax(negativeNumber: true); x < getValueMax(); x += 0.05)
+                    drawPoint(x, function.Invoke(x), Brushes.White, 1);
+
+            else if (param.Length == 1)
+                drawPoint(param[0], function.Invoke(param[0]), Brushes.Red);
+
+            else return false;
+
+            return true;
+        }
+
         bool drawAlgorithmLine(string algorithmLine)
         {
             int[] param = parseParam(algorithmLine);
@@ -174,29 +200,33 @@ namespace graph.math
             {
                 if (param.Length != 4) return false;
 
-                drawLine(param[0], param[1], param[2], param[3], Brushes.White);
+                return drawLine(param[0], param[1], param[2], param[3], Brushes.White);
             }
 
-            if (algorithmLine.IndexOf("point") > -1)
+            else if (algorithmLine.IndexOf("point") > -1)
             {
                 if (param.Length != 2) return false;
 
-                drawPoint(param[0], param[1], Brushes.Red);
+                return drawPoint(param[0], param[1], Brushes.Red);
             }
 
-            if (algorithmLine.IndexOf("sin") > -1)
+            else if (algorithmLine.IndexOf("sin") > -1)
             {
-                if (param.Length == 0)
-                    for (double x = getValueMax(negativeNumber: true); x < getValueMax(); x += 0.05)
-                        drawPoint(x, Math.Sin(x), Brushes.White, 1);
-
-                else if (param.Length == 1)
-                    drawPoint(param[0], Math.Sin(param[0]), Brushes.Red);
-
-                else return false;
+                return drawSimpleFuntion(Math.Sin, param);
             }
 
-            return true;
+            else if (algorithmLine.IndexOf("cos") > -1)
+            {
+                return drawSimpleFuntion(Math.Cos, param);
+            }
+
+            else if (algorithmLine.IndexOf("tg") > -1)
+            {
+                return drawSimpleFuntion(Math.Tan, param);
+            }
+
+            else
+                return false;
         }
 
         void drawAlgorithm()
