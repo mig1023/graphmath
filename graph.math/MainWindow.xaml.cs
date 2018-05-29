@@ -33,19 +33,38 @@ namespace graph.math
             hightlightText = graphText.SelectionBrush;
         }
 
-        private double getPoint(double xyPoint, double actualSize, double xyMove, bool isY)
+        private int getValueMax(bool negativeNumber = false)
+        {
+            int scale = (int)graphScale.Value;
+            double size = graphPlace.ActualWidth;
+
+            int centerPoint = (int)(getCenter(size, xMove) / scale);
+
+            if (!negativeNumber)
+                return (int)(size / scale) - centerPoint;
+            else
+                return -1 * (centerPoint + 1);
+        }
+
+        private double getCenter(double actualSize, double xyMove)
         {
             double center = xyMove + (actualSize / 2);
             int scale = (int)graphScale.Value;
 
             double centerPoint = 0;
-            double newPoint;
 
             for (double x = center % scale; x < actualSize; x += scale)
                 if ((x >= center) && (x < center + scale))
                     centerPoint = x;
 
-            newPoint = centerPoint + ((xyPoint * scale) * (isY ? 1 : -1));
+            return centerPoint;
+        }
+
+        private double getPoint(double xyPoint, double actualSize, double xyMove, bool isY)
+        {
+            double centerPoint = getCenter(actualSize, xyMove);
+            int scale = (int)graphScale.Value;
+            double newPoint = centerPoint + ((xyPoint * scale) * (isY ? 1 : -1));
 
             return newPoint;
         }
@@ -133,6 +152,8 @@ namespace graph.math
             int start = algorithmLine.IndexOf('(') + 1;
             int end = algorithmLine.IndexOf(')') - algorithmLine.IndexOf('(') - 1;
 
+            if (start == -1 || end == -1) return new int[] { };
+
             string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
 
             return Array.ConvertAll(paramLines, n => int.Parse(n));
@@ -147,10 +168,10 @@ namespace graph.math
 
         bool drawAlgorithmLine(string algorithmLine)
         {
+            int[] param = parseParam(algorithmLine);
+
             if (algorithmLine.IndexOf("line") > -1)
             {
-                int[] param = parseParam(algorithmLine);
-
                 if (param.Length != 4) return false;
 
                 drawLine(param[0], param[1], param[2], param[3], Brushes.White);
@@ -158,20 +179,21 @@ namespace graph.math
 
             if (algorithmLine.IndexOf("point") > -1)
             {
-                int[] param = parseParam(algorithmLine);
-
                 if (param.Length != 2) return false;
 
                 drawPoint(param[0], param[1], Brushes.Red);
             }
 
-            if (algorithmLine.IndexOf("sine") > -1)
+            if (algorithmLine.IndexOf("sin") > -1)
             {
-                for (double x = -10; x < 10; x += 0.01)
-                {
-                    double y = Math.Sin(x);
-                    drawPoint(x, y, Brushes.White, 1);
-                }
+                if (param.Length == 0)
+                    for (double x = getValueMax(negativeNumber: true); x < getValueMax(); x += 0.05)
+                        drawPoint(x, Math.Sin(x), Brushes.White, 1);
+
+                else if (param.Length == 1)
+                    drawPoint(param[0], Math.Sin(param[0]), Brushes.Red);
+
+                else return false;
             }
 
             return true;
