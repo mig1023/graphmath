@@ -105,6 +105,18 @@ namespace graph.math
             return true;
         }
 
+        private bool drawPoint(int[] coordinate, Brush color, int width = 2)
+        {
+            drawPoint(
+                x: coordinate[0],
+                y: coordinate[1],
+                color: color,
+                width: width
+            );
+
+            return true;
+        }
+
         private bool drawPointAbsolute(double x, double y, Brush color, int width = 2)
         {
             Point point = new Point(x, y);
@@ -122,7 +134,23 @@ namespace graph.math
             return true;
         }
 
-        private bool drawLine(double x1, double y1, double x2, double y2, Brush color, int width = 1)
+        private bool drawLine(int[] coordinate, Brush color, int width = 1, bool dash = false)
+        {
+            drawLine(
+                x1: coordinate[0],
+                y1: coordinate[1],
+                x2: coordinate[2],
+                y2: coordinate[3],
+                color: color,
+                width: width,
+                dash: dash
+            );
+
+            return true;
+        }
+
+        private bool drawLine(double x1, double y1, double x2, double y2,
+            Brush color, int width = 1, bool dash = false)
         {
             drawLineAbsolute(
                 x1: getXPoint(x1),
@@ -130,13 +158,15 @@ namespace graph.math
                 x2: getXPoint(x2),
                 y2: getYPoint(y2),
                 color: color,
-                width: width
+                width: width,
+                dash: dash
             );
 
             return true;
         }
 
-        private bool drawLineAbsolute(double x1, double y1, double x2, double y2, Brush color, int width = 1)
+        private bool drawLineAbsolute(double x1, double y1, double x2, double y2,
+            Brush color, int width = 1, bool dash = false)
         {
             var line = new Line()
             {
@@ -148,6 +178,12 @@ namespace graph.math
                 StrokeThickness = width,
                 SnapsToDevicePixels = true
             };
+
+            if (dash)
+            {
+                line.StrokeDashArray = new DoubleCollection() { 4 };
+            }
+
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             graphPlace.Children.Add(line);
 
@@ -171,6 +207,15 @@ namespace graph.math
             return Array.ConvertAll(paramLines, n => int.Parse(n));
         }
 
+        string parseVariable(string algorithmLine)
+        {
+            int equalitySign = algorithmLine.IndexOf('=');
+
+            if (equalitySign == -1) return "";
+            
+            return algorithmLine.Substring(0, equalitySign).Trim();
+        }
+
         void algorithmError(int start, int end)
         {
             graphText.SelectionBrush = Brushes.Red;
@@ -192,37 +237,76 @@ namespace graph.math
             return true;
         }
 
+        bool drawSumVector(int[] param)
+        {
+            if (param.Length != 2) return false;
+
+            Vector v1 = new Vector();
+            Vector v2 = new Vector();
+
+            foreach (Vector v in Vector.allVectors)
+            {
+                if (v.variableName == param[0].ToString()) v1 = v;
+                if (v.variableName == param[1].ToString()) v2 = v;
+            }
+
+            double x1 = v1.x1 + v2.x1;
+            double y1 = v1.y1 + v2.y1;
+            double x2 = v1.x2 + v2.x2;
+            double y2 = v1.y2 + v2.y2;
+
+            drawLine(v1.x2, v1.y2, x2, y2, Brushes.Red, dash: true);
+            drawLine(v2.x2, v2.y2, x2, y2, Brushes.Red, dash: true);
+
+            drawLine(v1.x1, v1.y1, x1, y1, Brushes.Red, dash: true);
+            drawLine(v2.x1, v2.y1, x1, y1, Brushes.Red, dash: true);
+
+            drawLine(x1, y1, x2, y2, Brushes.Red);
+
+            return true;
+        }
+
         bool drawAlgorithmLine(string algorithmLine)
         {
-            int[] param = parseParam(algorithmLine);
+            int[] p = parseParam(algorithmLine);
 
-            if (algorithmLine.IndexOf("line") > -1)
+            if (algorithmLine.IndexOf("vector") > -1)
             {
-                if (param.Length != 4) return false;
+                if (p.Length != 4) return false;
 
-                return drawLine(param[0], param[1], param[2], param[3], Brushes.White);
+                string varName = parseVariable(algorithmLine);
+
+                if (varName != "")
+                    Vector.createNewVector(varName, p);
+
+                return drawLine(p, Brushes.White);
+            }
+
+            if (algorithmLine.IndexOf("sum") > -1)
+            {
+                return drawSumVector(p);
             }
 
             else if (algorithmLine.IndexOf("point") > -1)
             {
-                if (param.Length != 2) return false;
+                if (p.Length != 2) return false;
 
-                return drawPoint(param[0], param[1], Brushes.Red);
+                return drawPoint(p[0], p[1], Brushes.Red);
             }
 
             else if (algorithmLine.IndexOf("sin") > -1)
             {
-                return drawSimpleFuntion(Math.Sin, param);
+                return drawSimpleFuntion(Math.Sin, p);
             }
 
             else if (algorithmLine.IndexOf("cos") > -1)
             {
-                return drawSimpleFuntion(Math.Cos, param);
+                return drawSimpleFuntion(Math.Cos, p);
             }
 
             else if (algorithmLine.IndexOf("tg") > -1)
             {
-                return drawSimpleFuntion(Math.Tan, param);
+                return drawSimpleFuntion(Math.Tan, p);
             }
 
             else
