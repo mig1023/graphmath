@@ -196,14 +196,21 @@ namespace graph.math
             return graphText.Text.Split('\n');
         }
 
-        int[] parseParam(string algorithmLine)
+        string[] parseStrParam(string algorithmLine)
         {
             int start = algorithmLine.IndexOf('(') + 1;
             int end = algorithmLine.IndexOf(')') - algorithmLine.IndexOf('(') - 1;
 
-            if (start == -1 || end == -1) return new int[] { };
+            if (start == -1 || end == -1) return new string[] { };
 
             string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
+
+            return paramLines;
+        }
+
+        int[] parseParam(string algorithmLine)
+        {
+            string[] paramLines = parseStrParam(algorithmLine);
 
             return Array.ConvertAll(paramLines, n => int.Parse(n));
         }
@@ -238,7 +245,7 @@ namespace graph.math
             return true;
         }
 
-        bool drawSumVector(int[] param)
+        bool drawSumVector(string[] param)
         {
             if (param.Length != 2) return false;
 
@@ -256,6 +263,7 @@ namespace graph.math
             double x2 = v1.x2 + v2.x2;
             double y2 = v1.y2 + v2.y2;
 
+            
             drawLine(v1.x2, v1.y2, x2, y2, Brushes.Red, dash: true);
             drawLine(v2.x2, v2.y2, x2, y2, Brushes.Red, dash: true);
 
@@ -269,10 +277,10 @@ namespace graph.math
 
         bool drawAlgorithmLine(string algorithmLine)
         {
-            int[] p = parseParam(algorithmLine);
-
             if (algorithmLine.IndexOf("vector") > -1)
             {
+                int[] p = parseParam(algorithmLine);
+
                 if (p.Length != 4) return false;
 
                 string varName = parseVariable(algorithmLine);
@@ -285,11 +293,13 @@ namespace graph.math
 
             if (algorithmLine.IndexOf("sum") > -1)
             {
-                return drawSumVector(p);
+                return drawSumVector(parseStrParam(algorithmLine));
             }
 
             else if (algorithmLine.IndexOf("point") > -1)
             {
+                int[] p = parseParam(algorithmLine);
+
                 if (p.Length != 2) return false;
 
                 return drawPoint(p[0], p[1], Brushes.Red);
@@ -297,17 +307,17 @@ namespace graph.math
 
             else if (algorithmLine.IndexOf("sin") > -1)
             {
-                return drawSimpleFuntion(Math.Sin, p);
+                return drawSimpleFuntion(Math.Sin, parseParam(algorithmLine));
             }
 
             else if (algorithmLine.IndexOf("cos") > -1)
             {
-                return drawSimpleFuntion(Math.Cos, p);
+                return drawSimpleFuntion(Math.Cos, parseParam(algorithmLine));
             }
 
             else if (algorithmLine.IndexOf("tg") > -1)
             {
-                return drawSimpleFuntion(Math.Tan, p);
+                return drawSimpleFuntion(Math.Tan, parseParam(algorithmLine));
             }
 
             else
