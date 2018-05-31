@@ -21,6 +21,7 @@ namespace graph.math
     {
         Point p;
         Brush hightlightText;
+        string[] algorithmLines;
 
         delegate double simpleFunction(double x);
 
@@ -315,8 +316,6 @@ namespace graph.math
 
         void drawAlgorithm()
         {
-            string[] algorithmLines = parseGraphText();
-
             int currentLineStart = 0;
 
             foreach(string algorithmLine in algorithmLines)
@@ -378,6 +377,7 @@ namespace graph.math
         private void buttonPlay_Click(object sender, RoutedEventArgs e)
         {
             graphDrawAlready = true;
+            algorithmLines = parseGraphText();
             graphPlaceReDraw();
         }
 
