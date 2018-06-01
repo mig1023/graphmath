@@ -205,7 +205,7 @@ namespace graph.math
 
             string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
 
-            return paramLines;
+            return Array.ConvertAll(paramLines, n => n.Trim());
         }
 
         int[] parseParam(string algorithmLine)
