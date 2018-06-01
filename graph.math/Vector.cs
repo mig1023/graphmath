@@ -8,7 +8,7 @@ namespace graph.math
 {
     class Vector
     {
-        public static List<Vector> allVectors = new List<Vector>();
+        public static Dictionary<string, Vector> allVectors = new Dictionary<string, Vector>();
 
         public string variableName;
 
@@ -28,7 +28,7 @@ namespace graph.math
             vec.x2 = x2;
             vec.y2 = y2;
 
-            Vector.allVectors.Add(vec);
+            Vector.allVectors.Add(varName, vec);
         }
 
         public static void createNewVector(string varName, int[] coordinate)

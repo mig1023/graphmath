@@ -250,20 +250,16 @@ namespace graph.math
             if (param.Length != 2) return false;
 
             Vector v1 = new Vector();
-            Vector v2 = new Vector();
+            v1 = Vector.allVectors[param[0].ToString()];
 
-            foreach (Vector v in Vector.allVectors)
-            {
-                if (v.variableName == param[0].ToString()) v1 = v;
-                if (v.variableName == param[1].ToString()) v2 = v;
-            }
+            Vector v2 = new Vector();
+            v2 = Vector.allVectors[param[1].ToString()];
 
             double x1 = v1.x1 + v2.x1;
             double y1 = v1.y1 + v2.y1;
             double x2 = v1.x2 + v2.x2;
             double y2 = v1.y2 + v2.y2;
 
-            
             drawLine(v1.x2, v1.y2, x2, y2, Brushes.Red, dash: true);
             drawLine(v2.x2, v2.y2, x2, y2, Brushes.Red, dash: true);
 
