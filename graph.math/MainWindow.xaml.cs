@@ -30,6 +30,12 @@ namespace graph.math
         double xMove = 0;
         double yMove = 0;
 
+        bool loop = false;
+        bool loopStartFlag = false;
+        int loopStart;
+        int loopEnd;
+        string loopName;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -281,7 +287,19 @@ namespace graph.math
         {
             string varName = parseVariable(algorithmLine);
 
-            if (Var.isVariable(algorithmLine))
+            if (algorithmLine.IndexOf("repeat") > -1)
+            {
+                string[] p = parseStrParam(algorithmLine);
+
+                loopName = p[0];
+                loopStart = int.Parse(p[1]);
+                loopEnd = int.Parse(p[2]);
+                loopStartFlag = true;
+
+                return true;
+            }
+
+            else if (Var.isVariable(algorithmLine))
             {
                 return Var.createNewVar(varName, algorithmLine);
             }
@@ -340,8 +358,23 @@ namespace graph.math
 
             foreach(string algorithmLine in algorithmLines)
             {
-                if (!drawAlgorithmLine(algorithmLine))
-                    algorithmError(currentLineStart, algorithmLine.Length);
+                if (loop)
+                    Var.createNewVar(loopName, loopStart.ToString());
+
+                do {
+
+                    if (loop)
+                    {
+                        loopStart++;
+                        Var.allVars[loopName].Value = loopStart;
+                    }
+
+                    if (!drawAlgorithmLine(algorithmLine))
+                        algorithmError(currentLineStart, algorithmLine.Length);
+
+                } while (loop && (loopStart < loopEnd));
+
+                if (loopStartFlag) loop = true;
 
                 currentLineStart += algorithmLine.Length + 1;
             }
