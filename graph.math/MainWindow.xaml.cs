@@ -205,7 +205,13 @@ namespace graph.math
 
             string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
 
-            return Array.ConvertAll(paramLines, n => n.Trim());
+            string[] paramLinesT = Array.ConvertAll(paramLines, n => n.Trim());
+
+            for (int a = 0; a < paramLinesT.Length; a++)
+                if (Var.allVars.ContainsKey(paramLinesT[a]))
+                    paramLinesT[a] = Var.allVars[paramLinesT[a]].Value.ToString();
+
+            return paramLinesT;
         }
 
         int[] parseParam(string algorithmLine)
@@ -273,13 +279,18 @@ namespace graph.math
 
         bool drawAlgorithmLine(string algorithmLine)
         {
-            if (algorithmLine.IndexOf("vector") > -1)
+            string varName = parseVariable(algorithmLine);
+
+            if (Var.isVariable(algorithmLine))
+            {
+                return Var.createNewVar(varName, algorithmLine);
+            }
+
+            else if (algorithmLine.IndexOf("vector") > -1)
             {
                 int[] p = parseParam(algorithmLine);
 
                 if (p.Length != 4) return false;
-
-                string varName = parseVariable(algorithmLine);
 
                 if (varName != "")
                     Vector.createNewVector(varName, p);
@@ -287,7 +298,7 @@ namespace graph.math
                 return drawLine(p, Brushes.White);
             }
 
-            if (algorithmLine.IndexOf("sum") > -1)
+            else if (algorithmLine.IndexOf("sum") > -1)
             {
                 return drawSumVector(parseStrParam(algorithmLine));
             }
@@ -323,6 +334,9 @@ namespace graph.math
         void drawAlgorithm()
         {
             int currentLineStart = 0;
+
+            Vector.allVectors.Clear();
+            Var.allVars.Clear();
 
             foreach(string algorithmLine in algorithmLines)
             {
