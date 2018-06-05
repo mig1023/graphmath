@@ -25,7 +25,10 @@ namespace graph.math
 
             var.Value =int.Parse(value.Substring(equalitySign+1).Trim());
 
-            Var.allVars.Add(varName, var);
+            if (Var.allVars.ContainsKey(varName))
+                Var.allVars[varName] = var;
+            else      
+                Var.allVars.Add(varName, var);
 
             return true;
         }

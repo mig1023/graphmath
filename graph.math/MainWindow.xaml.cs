@@ -291,6 +291,8 @@ namespace graph.math
             {
                 string[] p = parseStrParam(algorithmLine);
 
+                if (p.Length != 3) return false;
+
                 loopName = p[0];
                 loopStart = int.Parse(p[1]);
                 loopEnd = int.Parse(p[2]);
@@ -356,25 +358,34 @@ namespace graph.math
             Vector.allVectors.Clear();
             Var.allVars.Clear();
 
-            foreach(string algorithmLine in algorithmLines)
+            loopStartFlag = false;
+            loop = false;
+
+            foreach (string algorithmLine in algorithmLines)
             {
-                if (loop)
-                    Var.createNewVar(loopName, loopStart.ToString());
+                if (loop) Var.createNewVar(loopName, loopStart.ToString());
 
                 do {
 
-                    if (loop)
-                    {
-                        loopStart++;
-                        Var.allVars[loopName].Value = loopStart;
-                    }
+                    if (loop) Var.allVars[loopName].Value = loopStart;
 
                     if (!drawAlgorithmLine(algorithmLine))
+                    {
                         algorithmError(currentLineStart, algorithmLine.Length);
+                        return;
+                    }
 
-                } while (loop && (loopStart < loopEnd));
+                    if (loop) loopStart++;
 
-                if (loopStartFlag) loop = true;
+                } while (loop && (loopStart <= loopEnd));
+
+                if (loop) loop = false;
+
+                if (loopStartFlag)
+                {
+                    loopStartFlag = false;
+                    loop = true;
+                }
 
                 currentLineStart += algorithmLine.Length + 1;
             }
