@@ -28,7 +28,7 @@ namespace graph.math
             vec.x2 = x2;
             vec.y2 = y2;
 
-            Vector.allVectors.Add(varName, vec);
+            allVectors.Add(varName, vec);
         }
 
         public static void createNewVector(string varName, int[] coordinate)

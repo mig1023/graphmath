@@ -30,12 +30,6 @@ namespace graph.math
         double xMove = 0;
         double yMove = 0;
 
-        bool loop = false;
-        bool loopStartFlag = false;
-        int loopStart;
-        int loopEnd;
-        string loopName;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -236,11 +230,13 @@ namespace graph.math
             return algorithmLine.Substring(0, equalitySign).Trim();
         }
 
-        void algorithmError(int start, int end)
+        bool algorithmError(int start, int end)
         {
             graphText.SelectionBrush = Brushes.Red;
             graphText.Focus();
             graphText.Select(start, end);
+
+            return true;
         }
 
         bool drawSimpleFuntion(simpleFunction function, int[] param)
@@ -283,7 +279,45 @@ namespace graph.math
             return true;
         }
 
-        bool drawAlgorithmLine(string algorithmLine)
+        void lineSeparator(string[] algorithmLines)
+        {
+            int currentIndentation;
+            int prevIndentation = 0;
+            int lastLine = 0;
+
+            Regex regexSpaces = new Regex( @"^(\s+)" );
+            Regex regexTabs = new Regex(@"^(\t+)");
+
+            for (int line = 0; line < algorithmLines.Length; line++)
+            {
+                currentIndentation = 0;
+
+                Match matchSpace = regexSpaces.Match(algorithmLines[line]);
+
+                if (matchSpace.Success)
+                    currentIndentation =
+                        matchSpace.Groups[1].Value.ToCharArray().Where(c => c == ' ').Count() / 4;
+
+                Match matchTabs = regexTabs.Match(algorithmLines[line]);
+
+                if (matchTabs.Success)
+                    currentIndentation =
+                        matchTabs.Groups[1].Value.ToCharArray().Where(c => c == Convert.ToChar(9)).Count();
+
+                if (currentIndentation > prevIndentation)
+                    Block.openBlock(line);
+
+                else if (currentIndentation < prevIndentation)
+                    Block.closeBlock(line);
+
+                prevIndentation = currentIndentation;
+                lastLine = line;
+            }
+
+            Block.closeAllUnclosedBlock(lastLine);
+        }
+
+        bool drawAlgorithmLine(string algorithmLine, int line)
         {
             string varName = parseVariable(algorithmLine);
 
@@ -293,12 +327,13 @@ namespace graph.math
 
                 if (p.Length != 3) return false;
 
-                loopName = p[0];
-                loopStart = int.Parse(p[1]);
-                loopEnd = int.Parse(p[2]);
-                loopStartFlag = true;
-
-                return true;
+                return Loop.createNewLoop(
+                    varName: p[0],
+                    startLine: Block.allBlocks[line+1].startLine,
+                    endLine: Block.allBlocks[line+1].endLine,
+                    currentVar: int.Parse(p[1]),
+                    endStatment: int.Parse(p[2])
+                );
             }
 
             else if (Var.isVariable(algorithmLine))
@@ -351,44 +386,28 @@ namespace graph.math
                 return false;
         }
 
-        void drawAlgorithm()
+        bool drawAlgorithm()
         {
             int currentLineStart = 0;
 
             Vector.allVectors.Clear();
             Var.allVars.Clear();
+            Block.allBlocks.Clear();
+            Loop.allLoops.Clear();
 
-            loopStartFlag = false;
-            loop = false;
+            lineSeparator(algorithmLines);
 
-            foreach (string algorithmLine in algorithmLines)
+            for (int line = 0; line < algorithmLines.Length; line++)
             {
-                if (loop) Var.createNewVar(loopName, loopStart.ToString());
+                if (!drawAlgorithmLine(algorithmLines[line], line))
+                    return algorithmError(currentLineStart, algorithmLines[line].Length);
 
-                do {
+                line = Loop.returnLoop(line);
 
-                    if (loop) Var.allVars[loopName].Value = loopStart;
-
-                    if (!drawAlgorithmLine(algorithmLine))
-                    {
-                        algorithmError(currentLineStart, algorithmLine.Length);
-                        return;
-                    }
-
-                    if (loop) loopStart++;
-
-                } while (loop && (loopStart <= loopEnd));
-
-                if (loop) loop = false;
-
-                if (loopStartFlag)
-                {
-                    loopStartFlag = false;
-                    loop = true;
-                }
-
-                currentLineStart += algorithmLine.Length + 1;
+                currentLineStart += algorithmLines[line].Length + 1; // loop!
             }
+
+            return true;
         }
 
         void graphPlaceBackground(int scale)

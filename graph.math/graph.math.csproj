@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Block.cs" />
+    <Compile Include="Loop.cs" />
     <Compile Include="Var.cs" />
     <Compile Include="Vector.cs" />
     <Page Include="MainWindow.xaml">
