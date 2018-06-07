@@ -34,6 +34,7 @@ namespace graph.math
             hightlightText = graphText.SelectionBrush;
             Draw.graphPlace = graphPlace;
             Draw.graphScale = graphScale;
+            Error.graphText = graphText;
 
             Draw.graphPlaceIsReady = true;
         }
@@ -71,15 +72,6 @@ namespace graph.math
             if (equalitySign == -1) return "";
             
             return algorithmLine.Substring(0, equalitySign).Trim();
-        }
-
-        bool algorithmError(int start, int end)
-        {
-            graphText.SelectionBrush = Brushes.Red;
-            graphText.Focus();
-            graphText.Select(start, end);
-
-            return true;
         }
 
         private void graphPlaceReDraw()
@@ -161,23 +153,20 @@ namespace graph.math
 
         bool drawAlgorithm()
         {
-            int currentLineStart = 0;
-
             Vector.allVectors.Clear();
             Var.allVars.Clear();
             Block.allBlocks.Clear();
             Loop.allLoops.Clear();
 
             Block.lineSeparator(algorithmLines);
+            Error.algorithmLinesCalc(algorithmLines);
 
             for (int line = 0; line < algorithmLines.Length; line++)
             {
                 if (!drawAlgorithmLine(algorithmLines[line], line))
-                    return algorithmError(currentLineStart, algorithmLines[line].Length);
+                    return Error.algorithmError(line);
 
                 line = Loop.returnLoop(line);
-
-                currentLineStart += algorithmLines[line].Length + 1; // loop error!
             }
 
             return true;
