@@ -203,13 +203,9 @@ namespace graph.math
 
             if (start == -1 || end == -1) return new string[] { };
 
-            string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:");
+            string[] paramLines = Regex.Split(algorithmLine.Substring(start, end), ",|:|->");
 
             string[] paramLinesT = Array.ConvertAll(paramLines, n => n.Trim());
-
-            for (int a = 0; a < paramLinesT.Length; a++)
-                if (Var.allVars.ContainsKey(paramLinesT[a]))
-                    paramLinesT[a] = Var.allVars[paramLinesT[a]].Value.ToString();
 
             return paramLinesT;
         }
@@ -279,46 +275,10 @@ namespace graph.math
             return true;
         }
 
-        void lineSeparator(string[] algorithmLines)
-        {
-            int currentIndentation;
-            int prevIndentation = 0;
-            int lastLine = 0;
-
-            Regex regexSpaces = new Regex( @"^(\s+)" );
-            Regex regexTabs = new Regex(@"^(\t+)");
-
-            for (int line = 0; line < algorithmLines.Length; line++)
-            {
-                currentIndentation = 0;
-
-                Match matchSpace = regexSpaces.Match(algorithmLines[line]);
-
-                if (matchSpace.Success)
-                    currentIndentation =
-                        matchSpace.Groups[1].Value.ToCharArray().Where(c => c == ' ').Count() / 4;
-
-                Match matchTabs = regexTabs.Match(algorithmLines[line]);
-
-                if (matchTabs.Success)
-                    currentIndentation =
-                        matchTabs.Groups[1].Value.ToCharArray().Where(c => c == Convert.ToChar(9)).Count();
-
-                if (currentIndentation > prevIndentation)
-                    Block.openBlock(line);
-
-                else if (currentIndentation < prevIndentation)
-                    Block.closeBlock(line);
-
-                prevIndentation = currentIndentation;
-                lastLine = line;
-            }
-
-            Block.closeAllUnclosedBlock(lastLine);
-        }
-
         bool drawAlgorithmLine(string algorithmLine, int line)
         {
+            algorithmLine = Var.replaceVariable(algorithmLine);
+
             string varName = parseVariable(algorithmLine);
 
             if (algorithmLine.IndexOf("repeat") > -1)
@@ -395,7 +355,7 @@ namespace graph.math
             Block.allBlocks.Clear();
             Loop.allLoops.Clear();
 
-            lineSeparator(algorithmLines);
+            Block.lineSeparator(algorithmLines);
 
             for (int line = 0; line < algorithmLines.Length; line++)
             {
@@ -404,7 +364,7 @@ namespace graph.math
 
                 line = Loop.returnLoop(line);
 
-                currentLineStart += algorithmLines[line].Length + 1; // loop!
+                currentLineStart += algorithmLines[line].Length + 1; // loop error!
             }
 
             return true;
