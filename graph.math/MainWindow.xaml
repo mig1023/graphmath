@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:graph.math"
         mc:Ignorable="d"
-        Title="graph.math" Height="422.059" Width="878.86">
-    <Grid Background="#FF2D2D30">
+        Title="graph.math" Height="450" Width="880" SizeChanged="Window_SizeChanged">
+    <Grid x:Name="graphGrid" Background="#FF2D2D30">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Background="#FF333333">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -20,41 +20,15 @@
             <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="2"
                       VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="#FF007ACC"></GridSplitter>
             <Canvas x:Name="graphPlace" ClipToBounds="True" Grid.Row="0" Cursor="Hand" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF333333" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged" MouseDown="graphPlace_MouseDown" MouseMove="graphPlace_MouseMove" MouseUp="graphPlace_MouseUp" MouseLeave="graphPlace_MouseLeave"/>
-            <TextBox x:Name="graphText" AcceptsReturn="True" AcceptsTab="True" Grid.Column="2" HorizontalAlignment="Stretch" Height="173" Margin="10,59,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="#FF3E3E42" Foreground="White" BorderBrush="{x:Null}" PreviewMouseDown="graphText_MouseDown"/>
-            <Slider x:Name="graphScale" Grid.Column="2" Maximum="100" Minimum="1" Value="10" TickFrequency="100" TickPlacement="BottomRight" Margin="10,257,10,86" Foreground="#FF3E3E42" Background="{x:Null}" ValueChanged="graphScale_ValueChanged"/>
-            
-            <DockPanel Grid.Column="2" HorizontalAlignment="Stretch" Height="32" LastChildFill="False" Margin="10,22,10,0" VerticalAlignment="Top" >
-                <Button x:Name="buttonLibrary" DockPanel.Dock="Right" Content="library" Background="Transparent" Foreground="White" 
-                FontFamily="Tw Cen MT Condensed" FontSize="29" Height="32" Width="85" Margin="0,0,5,0"
-                BorderBrush="Transparent" BorderThickness="0">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter Content="{TemplateBinding Content}"/>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+            <TextBox x:Name="graphText" AcceptsReturn="True" AcceptsTab="True" Grid.Column="2" HorizontalAlignment="Stretch" Margin="10,71,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="#FF3E3E42" Foreground="White" BorderBrush="{x:Null}" PreviewMouseDown="graphText_MouseDown" Height="280"/>
+            <Slider x:Name="graphScale" Grid.Column="2" Maximum="100" Minimum="1" Value="10" TickFrequency="100" TickPlacement="BottomRight" Margin="8,362,12,8" Foreground="#FF3E3E42" Background="{x:Null}" ValueChanged="graphScale_ValueChanged"/>
 
-                <Button x:Name="buttonClear" DockPanel.Dock="Right" Content="clear" Background="Transparent" Foreground="White" 
-                FontFamily="Tw Cen MT Condensed" FontSize="29" Height="32" Width="94" Margin="0,0,5,0"
-                BorderBrush="Transparent" BorderThickness="0" Click="buttonClear_Click">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter Content="{TemplateBinding Content}"/>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <Button x:Name="buttonPlay" DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="play" Background="Transparent" Foreground="White" 
-                FontFamily="Tw Cen MT Condensed" FontSize="29" Height="32" Width="94" Margin="0,0,5,0"
-                BorderBrush="Transparent" BorderThickness="0" Click="buttonPlay_Click">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter Content="{TemplateBinding Content}"/>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-                
+            <DockPanel Grid.Column="2" HorizontalAlignment="Stretch" Height="43" LastChildFill="False" Margin="10,16,10,0" VerticalAlignment="Top" >
+                <TextBlock x:Name="buttonLib" DockPanel.Dock="Right" Grid.Column="2" HorizontalAlignment="Left" Height="44" TextWrapping="Wrap" Text="Library" VerticalAlignment="Top" Width="107" Foreground="White" FontSize="29" TextAlignment="Center"/>
+                <TextBlock x:Name="buttonClear" DockPanel.Dock="Right" Grid.Column="2" HorizontalAlignment="Left" Height="44" TextWrapping="Wrap" Text="Clear" VerticalAlignment="Top" Width="86" Foreground="White" FontSize="29" TextAlignment="Center" PreviewMouseDown="buttonClear_PreviewMouseDown"/>
+                <TextBlock x:Name="buttonPlay" DockPanel.Dock="Right" Grid.Column="2" HorizontalAlignment="Left" Height="44" TextWrapping="Wrap" Text="Play" VerticalAlignment="Top" Width="86" Background="#FF007ACC" Foreground="White" FontSize="29" FontWeight="Bold" TextAlignment="Center" PreviewMouseDown="buttonPlay_PreviewMouseDown"/>
             </DockPanel>
+
         </Grid>
     </Grid>
 </Window>

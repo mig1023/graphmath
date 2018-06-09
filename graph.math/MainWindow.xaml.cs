@@ -188,20 +188,6 @@ namespace graph.math
             graphPlaceReDraw();
         }
 
-        private void buttonPlay_Click(object sender, RoutedEventArgs e)
-        {
-            graphDrawAlready = true;
-            algorithmLines = parseGraphText();
-            graphPlaceReDraw();
-        }
-
-        private void buttonClear_Click(object sender, RoutedEventArgs e)
-        {
-            graphPlace.Children.Clear();
-            Draw.graphPlaceBackground((int)graphScale.Value);
-            graphDrawAlready = false;
-        }
-
         private void graphPlace_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Control c = sender as Control;
@@ -238,6 +224,28 @@ namespace graph.math
         private void graphText_MouseDown(object sender, MouseButtonEventArgs e)
         {
             graphText.SelectionBrush = hightlightText;
+        }
+
+        private void buttonPlay_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            graphDrawAlready = true;
+            algorithmLines = parseGraphText();
+            graphPlaceReDraw();
+        }
+
+        private void buttonClear_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            graphPlace.Children.Clear();
+            Draw.graphPlaceBackground((int)graphScale.Value);
+            graphDrawAlready = false;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            graphText.Height = graphGrid.ActualHeight - 135;
+
+            double graphScaleTop = graphText.Height + graphText.Margin.Top + 12;
+            graphScale.Margin = new Thickness(8, graphScaleTop, 12, 8);
         }
     }
 }
