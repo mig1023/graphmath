@@ -86,7 +86,12 @@ namespace graph.math
 
             string varName = parseVariable(algorithmLine);
 
-            if (algorithmLine.IndexOf("repeat") > -1)
+            Regex regexFreeLine = new Regex(@"^[\t\r\n\s]*$");
+
+            if (regexFreeLine.Match(algorithmLine).Success)
+                return true;
+
+            else if (algorithmLine.IndexOf("repeat") > -1)
             {
                 string[] p = parseStrParam(algorithmLine);
 
@@ -94,17 +99,15 @@ namespace graph.math
 
                 return Loop.createNewLoop(
                     varName: p[0],
-                    startLine: Block.allBlocks[line+1].startLine,
-                    endLine: Block.allBlocks[line+1].endLine,
+                    startLine: Block.allBlocks[line + 1].startLine,
+                    endLine: Block.allBlocks[line + 1].endLine,
                     currentVar: int.Parse(p[1]),
                     endStatment: int.Parse(p[2])
                 );
             }
 
             else if (Var.isVariable(algorithmLine))
-            {
                 return Var.createNewVar(varName, algorithmLine);
-            }
 
             else if (algorithmLine.IndexOf("vector") > -1)
             {
@@ -119,9 +122,7 @@ namespace graph.math
             }
 
             else if (algorithmLine.IndexOf("sum") > -1)
-            {
                 return Draw.drawSumVector(parseStrParam(algorithmLine));
-            }
 
             else if (algorithmLine.IndexOf("point") > -1)
             {
@@ -133,19 +134,13 @@ namespace graph.math
             }
 
             else if (algorithmLine.IndexOf("sin") > -1)
-            {
                 return Draw.drawSimpleFuntion(Math.Sin, parseParam(algorithmLine));
-            }
 
             else if (algorithmLine.IndexOf("cos") > -1)
-            {
                 return Draw.drawSimpleFuntion(Math.Cos, parseParam(algorithmLine));
-            }
 
             else if (algorithmLine.IndexOf("tg") > -1)
-            {
                 return Draw.drawSimpleFuntion(Math.Tan, parseParam(algorithmLine));
-            }
 
             else
                 return false;
@@ -163,7 +158,13 @@ namespace graph.math
 
             for (int line = 0; line < algorithmLines.Length; line++)
             {
-                if (!drawAlgorithmLine(algorithmLines[line], line))
+                string algLine = algorithmLines[line];
+
+                int comment = algorithmLines[line].IndexOf("//");
+                if (comment > -1)
+                    algLine = algorithmLines[line].Remove(comment);
+
+                if (!drawAlgorithmLine(algLine, line))
                     return Error.algorithmError(line);
 
                 line = Loop.returnLoop(line);
