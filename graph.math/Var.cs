@@ -65,11 +65,11 @@ namespace graph.math
 
             if (equalitySign < 0) equalitySign = 0;
 
-            for (int v = 0; v < Var.allVars.Count; v++)
+            for (int v = 0; v < allVars.Count; v++)
             {
-                string key = Var.allVars.ElementAt(v).Key;
+                string key = allVars.ElementAt(v).Key;
                 string arrayKey = '[' + key + ']';
-                string value = Var.allVars.ElementAt(v).Value.Value.ToString();
+                string value = allVars.ElementAt(v).Value.Value.ToString();
 
                 foreach(int index in allIndexOf(algorithmLine, arrayKey))
                     newAlgorithmLine = newAlgorithmLine.Replace(arrayKey, value);

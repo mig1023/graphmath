@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Block.cs" />
+    <Compile Include="Conditional.cs" />
     <Compile Include="Draw.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Loop.cs" />

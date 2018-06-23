@@ -70,6 +70,8 @@ namespace graph.math
             int equalitySign = algorithmLine.IndexOf('=');
 
             if (equalitySign == -1) return "";
+
+            if (algorithmLine.IndexOf("==") >= 0) return ""; 
             
             return algorithmLine.Substring(0, equalitySign).Trim();
         }
@@ -90,6 +92,21 @@ namespace graph.math
 
             if (regexFreeLine.Match(algorithmLine).Success)
                 return true;
+
+            else if (algorithmLine.IndexOf("if") > -1)
+            {
+                int conditionResult = Conditional.error(algorithmLine);
+
+                if (conditionResult == 0)
+                    return false;
+                else if (conditionResult == 2)
+                {
+                    Conditional.skipThisBlock = true;
+                    return true;
+                }
+                else
+                    return true;
+            }
 
             else if (algorithmLine.IndexOf("repeat") > -1)
             {
@@ -168,6 +185,9 @@ namespace graph.math
                     return Error.algorithmError(line);
 
                 line = Loop.returnLoop(line);
+
+                if (Conditional.skipThisBlock)
+                    line = Block.allBlocks[line + 1].endLine;
             }
 
             return true;
