@@ -9,13 +9,9 @@ namespace graph.math
 {
     class Conditional
     {
-        public static bool skipThisBlock = false;
-
-        public static int error(string exp)
+        public static int check(string exp)
         {
-            Regex regexCheck = new Regex(@"\(\s*(\d+)\s*(==|>=|<=)\s*(\d+)\s*\)");
-
-            Match condition = regexCheck.Match(exp);
+            Match condition = Regexp.Check(@"\(\s*(\d+)\s*(==|>=|<=)\s*(\d+)\s*\)", exp, param: true);
 
             if (!condition.Success)
                 return 0;

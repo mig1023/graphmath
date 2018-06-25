@@ -65,17 +65,6 @@ namespace graph.math
             return Array.ConvertAll(paramLines, n => int.Parse(n));
         }
 
-        string parseVariable(string algorithmLine)
-        {
-            int equalitySign = algorithmLine.IndexOf('=');
-
-            if (equalitySign == -1) return "";
-
-            if (algorithmLine.IndexOf("==") >= 0) return ""; 
-            
-            return algorithmLine.Substring(0, equalitySign).Trim();
-        }
-
         private void graphPlaceReDraw()
         {
             Draw.graphPlaceBackground((int)graphScale.Value);
@@ -86,26 +75,23 @@ namespace graph.math
         {
             algorithmLine = Var.replaceVariable(algorithmLine);
 
-            string varName = parseVariable(algorithmLine);
+            string varName = Var.parseVariable(algorithmLine);
 
-            Regex regexFreeLine = new Regex(@"^[\t\r\n\s]*$");
-
-            if (regexFreeLine.Match(algorithmLine).Success)
+            if (Regexp.Check(@"^[\t\r\n\s]*$", algorithmLine))
                 return true;
 
             else if (algorithmLine.IndexOf("if") > -1)
             {
-                int conditionResult = Conditional.error(algorithmLine);
+                int conditionResult = Conditional.check(algorithmLine);
 
                 if (conditionResult == 0)
                     return false;
                 else if (conditionResult == 2)
-                {
-                    Conditional.skipThisBlock = true;
-                    return true;
-                }
+                    Block.allBlocks[line + 1].skipThisBlock = true;
                 else
-                    return true;
+                    Block.allBlocks[line + 1].skipThisBlock = false;
+
+                return true;
             }
 
             else if (algorithmLine.IndexOf("repeat") > -1)
@@ -184,10 +170,11 @@ namespace graph.math
                 if (!drawAlgorithmLine(algLine, line))
                     return Error.algorithmError(line);
 
-                line = Loop.returnLoop(line);
+                if (Block.allBlocks.ContainsKey(line + 1))
+                    if (Block.allBlocks[line + 1].skipThisBlock)
+                        line = Block.allBlocks[line + 1].endLine;
 
-                if (Conditional.skipThisBlock)
-                    line = Block.allBlocks[line + 1].endLine;
+                line = Loop.returnLoop(line);
             }
 
             return true;

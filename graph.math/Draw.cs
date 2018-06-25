@@ -26,7 +26,7 @@ namespace graph.math
             int scale = (int)graphScale.Value;
             double size = (isY ? graphPlace.ActualHeight : graphPlace.ActualWidth);
 
-            int centerPoint = (int)(Draw.getCenter(size, xMove) / scale);
+            int centerPoint = (int)(getCenter(size, xMove) / scale);
 
             if (isY) negativeNumber = !negativeNumber;
 

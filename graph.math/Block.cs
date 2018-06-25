@@ -15,6 +15,7 @@ namespace graph.math
 
         public int startLine;
         public int endLine = -1;
+        public bool skipThisBlock = false;
 
         public static void openBlock(int startLine)
         {

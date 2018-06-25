@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace graph.math
@@ -35,9 +34,7 @@ namespace graph.math
 
         public static bool isVariable(string algorithmLine)
         {
-            Regex number = new Regex(@"=\s*[0-9]+\n?\r?$");
-
-            if (number.IsMatch(algorithmLine))
+            if (Regexp.Check(@"=\s*[0-9]+\n?\r?$", algorithmLine))
                 return true;
             else
                 return false;
@@ -61,10 +58,6 @@ namespace graph.math
         {
             StringBuilder newAlgorithmLine = new StringBuilder(algorithmLine);
 
-            int equalitySign = algorithmLine.IndexOf('=');
-
-            if (equalitySign < 0) equalitySign = 0;
-
             for (int v = 0; v < allVars.Count; v++)
             {
                 string key = allVars.ElementAt(v).Key;
@@ -74,11 +67,22 @@ namespace graph.math
                 foreach(int index in allIndexOf(algorithmLine, arrayKey))
                     newAlgorithmLine = newAlgorithmLine.Replace(arrayKey, value);
 
-                foreach (int index in allIndexOf(algorithmLine, key, equalitySign))
+                foreach (int index in allIndexOf(algorithmLine, key))
                     newAlgorithmLine = newAlgorithmLine.Replace(key, value);
             }
 
             return newAlgorithmLine.ToString();
+        }
+
+        public static string parseVariable(string algorithmLine)
+        {
+            int equalitySign = algorithmLine.IndexOf('=');
+
+            if (equalitySign == -1) return "";
+
+            if (algorithmLine.IndexOf("==") >= 0) return "";
+
+            return algorithmLine.Substring(0, equalitySign).Trim();
         }
     }
 }
