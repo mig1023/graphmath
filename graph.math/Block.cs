@@ -69,8 +69,8 @@ namespace graph.math
                     openBlock(line);
 
                 else if (currentIndentation < prevIndentation)
-                    for(int a = currentIndentation; a > prevIndentation; a--)
-                    	closeBlock(line);
+                    for (int a = currentIndentation; a < prevIndentation; a++)
+                        closeBlock(line);
 
                 prevIndentation = currentIndentation;
                 lastLine = line;
