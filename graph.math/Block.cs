@@ -46,20 +46,17 @@ namespace graph.math
             int prevIndentation = 0;
             int lastLine = 0;
 
-            Regex regexSpaces = new Regex(@"^(\s+)");
-            Regex regexTabs = new Regex(@"^(\t+)");
-
             for (int line = 0; line < algorithmLines.Length; line++)
             {
                 currentIndentation = 0;
 
-                Match matchSpace = regexSpaces.Match(algorithmLines[line]);
+                Match matchSpace = Regexp.Check(@"^(\s+)", algorithmLines[line], param: true);
 
                 if (matchSpace.Success)
                     currentIndentation =
                         matchSpace.Groups[1].Value.ToCharArray().Where(c => c == ' ').Count() / 4;
 
-                Match matchTabs = regexTabs.Match(algorithmLines[line]);
+                Match matchTabs = Regexp.Check(@"^(\t+)", algorithmLines[line], param: true);
 
                 if (matchTabs.Success)
                     currentIndentation =

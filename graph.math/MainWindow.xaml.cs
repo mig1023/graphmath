@@ -62,6 +62,12 @@ namespace graph.math
         {
             string[] paramLines = parseStrParam(algorithmLine);
 
+            int param;
+
+            for (int a = 0; a < paramLines.Length; a++)
+                if (!int.TryParse(paramLines[a], out param))
+                    return new int[] { };
+
             return Array.ConvertAll(paramLines, n => int.Parse(n));
         }
 
@@ -108,6 +114,9 @@ namespace graph.math
                     endStatment: int.Parse(p[2])
                 );
             }
+
+            else if (Var.isIncrement(algorithmLine))
+                return Var.Increment(varName, algorithmLine);
 
             else if (Var.isVariable(algorithmLine))
                 return Var.createNewVar(varName, algorithmLine);

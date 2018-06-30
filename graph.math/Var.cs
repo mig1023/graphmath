@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace graph.math
@@ -32,9 +33,30 @@ namespace graph.math
             return true;
         }
 
+        public static bool Increment(string varName, string value)
+        {
+            Match condition = Regexp.Check(@"\+\=\s*([0-9]+)\s*\n?\r?$", value, param: true);
+
+            if (allVars.ContainsKey(varName))
+            {
+                allVars[varName].Value += Double.Parse(condition.Groups[1].Value);
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool isVariable(string algorithmLine)
         {
-            if (Regexp.Check(@"=\s*[0-9]+\n?\r?$", algorithmLine))
+            if (Regexp.Check(@"=\s*[0-9]+\s*\n?\r?$", algorithmLine))
+                return true;
+            else
+                return false;
+        }
+
+        public static bool isIncrement(string algorithmLine)
+        {
+            if (Regexp.Check(@"\+\=\s*[0-9]+\s*\n?\r?$", algorithmLine))
                 return true;
             else
                 return false;
@@ -64,10 +86,15 @@ namespace graph.math
                 string arrayKey = '[' + key + ']';
                 string value = allVars.ElementAt(v).Value.Value.ToString();
 
-                foreach(int index in allIndexOf(algorithmLine, arrayKey))
+                int startPos = 0;
+
+                if (isIncrement(algorithmLine) || isVariable(algorithmLine))
+                    startPos = algorithmLine.IndexOf("=");
+
+                foreach (int index in allIndexOf(algorithmLine, arrayKey))
                     newAlgorithmLine = newAlgorithmLine.Replace(arrayKey, value);
 
-                foreach (int index in allIndexOf(algorithmLine, key))
+                foreach (int index in allIndexOf(algorithmLine, key, startPos))
                     newAlgorithmLine = newAlgorithmLine.Replace(key, value);
             }
 
@@ -81,6 +108,8 @@ namespace graph.math
             if (equalitySign == -1) return "";
 
             if (algorithmLine.IndexOf("==") >= 0) return "";
+
+            if (Regexp.Check(@"(\+\=|\-\=|\*\=)", algorithmLine)) equalitySign -= 1;
 
             return algorithmLine.Substring(0, equalitySign).Trim();
         }
