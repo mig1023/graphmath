@@ -50,6 +50,9 @@ namespace graph.math
             {
                 currentIndentation = 0;
 
+                if (Regexp.Check(@"^[\t\r\n\s]*$", algorithmLines[line]))
+                    continue;
+
                 Match matchSpace = Regexp.Check(@"^(\s+)", algorithmLines[line], param: true);
 
                 if (matchSpace.Success)
