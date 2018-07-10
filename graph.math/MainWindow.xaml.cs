@@ -100,6 +100,19 @@ namespace graph.math
                 return true;
             }
 
+            else if (algorithmLine.IndexOf("else") > -1)
+            {
+                int startLine = Block.startOfThisBlock(line);
+
+                if (startLine == -1)
+                    return false;
+
+                if ( Block.allBlocks[startLine].skipThisBlock != true )
+                    Block.allBlocks[line + 1].skipThisBlock = true;
+
+                return true;
+            }
+
             else if (algorithmLine.IndexOf("repeat") > -1)
             {
                 string[] p = parseStrParam(algorithmLine);
@@ -165,6 +178,7 @@ namespace graph.math
             Block.allBlocks.Clear();
             Loop.allLoops.Clear();
 
+            Block.algorithmLines = algorithmLines;
             Block.lineSeparator(algorithmLines);
             Error.algorithmLinesCalc(algorithmLines);
 
