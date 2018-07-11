@@ -107,7 +107,9 @@ namespace graph.math
                 if (startLine == -1)
                     return false;
 
-                if ( Block.allBlocks[startLine].skipThisBlock != true )
+                if ( Block.allBlocks[startLine].skipThisBlock == true )
+                    Block.allBlocks[line + 1].skipThisBlock = false;
+                else
                     Block.allBlocks[line + 1].skipThisBlock = true;
 
                 return true;
