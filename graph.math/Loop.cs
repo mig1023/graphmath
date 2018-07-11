@@ -18,6 +18,8 @@ namespace graph.math
         public int startLine;
         public int endLine;
 
+        bool increment;
+
         public static bool createNewLoop(string varName, int startLine, int endLine,
             int currentVar, int endStatment)
         {
@@ -28,6 +30,11 @@ namespace graph.math
             loop.endLine = endLine;
             loop.currentVar = currentVar;
             loop.endStatment = endStatment;
+
+            if (currentVar > endStatment)
+                loop.increment = false;
+            else
+                loop.increment = true;
 
             Var.createNewVar(varName, currentVar.ToString());
 
@@ -41,11 +48,17 @@ namespace graph.math
             foreach (Loop l in allLoops)
                 if (line == l.endLine)
                 {
-                    l.currentVar++;
+                    if (l.increment)
+                        l.currentVar++;
+                    else
+                        l.currentVar--;
 
                     Var.allVars[l.varName].Value = l.currentVar;
 
-                    if (l.currentVar <= l.endStatment)
+                    if (l.currentVar <= l.endStatment && l.increment)
+                        line = (l.startLine - 1);
+
+                    if (l.currentVar >= l.endStatment && !l.increment)
                         line = (l.startLine - 1);
                 }
 
