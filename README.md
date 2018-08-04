@@ -2,6 +2,8 @@
 
 ![](https://s8.hostingkartinok.com/uploads/images/2018/06/543def5021bf6a57954574ed3a6eb7be.png)
 
+
+
 ### Examples of graphical algorithms:
 
 Ex.:
@@ -12,6 +14,8 @@ repeat( $A, 1 -> 3 )
 		C[$A][$B] = vector( 0, 0 : $A, $B )
 		sum( C[$A][$B], $D )
 ```
+
+![](https://s8.hostingkartinok.com/uploads/images/2018/08/aa854e08ed6d6c819a6677449efefad8.png)
 
 Ex.:
 ```
@@ -25,6 +29,8 @@ repeat( $B, -5 -> -1 )
 	vector( -20, $B : 20, $B )
 ```
 
+![](https://s8.hostingkartinok.com/uploads/images/2018/08/3e71cdc5281c91bd6ed21990b70185b0.png)
+
 Ex.:
 ```
 $A = 10
@@ -33,6 +39,8 @@ repeat( $B, 1 -> 10 )
 	vector( 0, 0 : $B, $A )
 	vector( $B, $A : 15, 0 )
 ```
+
+![](https://s8.hostingkartinok.com/uploads/images/2018/08/5885cc819bb5fca143281f7a60d0f727.png)
 
 Ex.:
 ```
@@ -60,6 +68,8 @@ else
 		vector( -10,-10 : -20, 0 )
 ```
 
+![](https://s8.hostingkartinok.com/uploads/images/2018/08/4ae2c48c6b09c08a4aa5845a25d06fdd.png)
+
 Ex.:
 ```
 $B = 20
@@ -75,3 +85,5 @@ repeat( $A, 1 -> $B)
 repeat( $C, -1 -> -5 )
 	vector( -20, $C : 20, $C )
 ```
+
+![](https://s8.hostingkartinok.com/uploads/images/2018/08/045ed3251307aee2064e77a2e982c425.png)
