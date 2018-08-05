@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -12,6 +13,7 @@ namespace graph.math
 
         public static Canvas graphPlace;
         public static Slider graphScale;
+        public static MainWindow main;
         public static double xMove = 0;
         public static double yMove = 0;
 
@@ -169,6 +171,11 @@ namespace graph.math
             }
 
             line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+            line.MouseMove += new MouseEventHandler(main.graphPlace_MouseMove);
+            line.MouseUp += new MouseButtonEventHandler(main.graphPlace_MouseUp);
+            line.MouseDown += new MouseButtonEventHandler(main.graphPlace_MouseDown);
+
             graphPlace.Children.Add(line);
 
             return true;

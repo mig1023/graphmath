@@ -18,7 +18,9 @@ namespace graph.math
         public MainWindow()
         {
             InitializeComponent();
+            
             hightlightText = graphText.SelectionBrush;
+            Draw.main = this;
             Draw.graphPlace = graphPlace;
             Draw.graphScale = graphScale;
             Error.graphText = graphText;
@@ -48,7 +50,7 @@ namespace graph.math
             graphPlaceReDraw();
         }
 
-        private void graphPlace_MouseDown(object sender, MouseButtonEventArgs e)
+        public void graphPlace_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Control c = sender as Control;
             Mouse.Capture(c);
@@ -56,7 +58,13 @@ namespace graph.math
             moveGraphPlace = true;
         }
 
-        private void graphPlace_MouseMove(object sender, MouseEventArgs e)
+        public void graphPlace_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            moveGraphPlace = false;
+        }
+
+        public void graphPlace_MouseMove(object sender, MouseEventArgs e)
         {
             if (moveGraphPlace)
             {
@@ -67,12 +75,6 @@ namespace graph.math
 
                 graphPlaceReDraw();
             }
-        }
-
-        private void graphPlace_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            Mouse.Capture(null);
-            moveGraphPlace = false;
         }
 
         private void graphPlace_MouseLeave(object sender, MouseEventArgs e)
