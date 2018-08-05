@@ -60,6 +60,7 @@
     <Compile Include="Draw.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Loop.cs" />
+    <Compile Include="Parse.cs" />
     <Compile Include="Regexp.cs" />
     <Compile Include="Var.cs" />
     <Compile Include="Vector.cs" />

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,6 +16,8 @@ namespace graph.math
         public static double yMove = 0;
 
         public static bool graphPlaceIsReady = false;
+
+        public static string[] algorithmLines;
 
         private static int getValueMax(bool negativeNumber = false, bool isY = false)
         {
@@ -259,5 +257,135 @@ namespace graph.math
             else
                 return -1 * (centerPoint + 1);
         }
+
+        public static bool drawAlgorithmLine(string algorithmLine, int line)
+        {
+            algorithmLine = Var.replaceVariable(algorithmLine);
+
+            string varName = Var.parseVariable(algorithmLine);
+
+            if (Regexp.Check(@"^[\t\r\n\s]*$", algorithmLine))
+                return true;
+
+            else if (algorithmLine.IndexOf("if") > -1)
+            {
+                int conditionResult = Conditional.check(algorithmLine);
+
+                if (conditionResult == 0)
+                    return false;
+                else if (conditionResult == 2)
+                    Block.allBlocks[line + 1].skipThisBlock = true;
+                else
+                    Block.allBlocks[line + 1].skipThisBlock = false;
+
+                return true;
+            }
+
+            else if (algorithmLine.IndexOf("else") > -1)
+            {
+                int startLine = Block.startOfThisBlock(line);
+
+                if (startLine == -1)
+                    return false;
+
+                if (Block.allBlocks[startLine].skipThisBlock == true)
+                    Block.allBlocks[line + 1].skipThisBlock = false;
+                else
+                    Block.allBlocks[line + 1].skipThisBlock = true;
+
+                return true;
+            }
+
+            else if (algorithmLine.IndexOf("repeat") > -1)
+            {
+                string[] p = Parse.parseStrParam(algorithmLine);
+
+                if (p.Length != 3) return false;
+
+                return Loop.createNewLoop(
+                    varName: p[0],
+                    startLine: Block.allBlocks[line + 1].startLine,
+                    endLine: Block.allBlocks[line + 1].endLine,
+                    currentVar: int.Parse(p[1]),
+                    endStatment: int.Parse(p[2])
+                );
+            }
+
+            else if (Var.isIncrement(algorithmLine))
+                return Var.Increment(varName, algorithmLine);
+
+            else if (Var.isVariable(algorithmLine))
+                return Var.createNewVar(varName, algorithmLine);
+
+            else if (algorithmLine.IndexOf("vector") > -1)
+            {
+                int[] p = Parse.parseParam(algorithmLine);
+
+                if (p.Length != 4) return false;
+
+                if (varName != "")
+                    Vector.createNewVector(varName, p);
+
+                return Draw.drawLine(p, Brushes.White);
+            }
+
+            else if (algorithmLine.IndexOf("sum") > -1)
+                return Draw.drawSumVector(Parse.parseStrParam(algorithmLine));
+
+            else if (algorithmLine.IndexOf("point") > -1)
+            {
+                int[] p = Parse.parseParam(algorithmLine);
+
+                if (p.Length != 2) return false;
+
+                return Draw.drawPoint(p, Brushes.Red);
+            }
+
+            else if (algorithmLine.IndexOf("sin") > -1)
+                return Draw.drawSimpleFuntion(Math.Sin, Parse.parseParam(algorithmLine));
+
+            else if (algorithmLine.IndexOf("cos") > -1)
+                return Draw.drawSimpleFuntion(Math.Cos, Parse.parseParam(algorithmLine));
+
+            else if (algorithmLine.IndexOf("tg") > -1)
+                return Draw.drawSimpleFuntion(Math.Tan, Parse.parseParam(algorithmLine));
+
+            else
+                return false;
+        }
+
+        public static bool drawAlgorithm()
+        {
+            Vector.allVectors.Clear();
+            Var.allVars.Clear();
+            Block.allBlocks.Clear();
+            Loop.allLoops.Clear();
+
+            Block.algorithmLines = algorithmLines;
+            Block.lineSeparator(algorithmLines);
+            Error.algorithmLinesCalc(algorithmLines);
+
+            for (int line = 0; line < algorithmLines.Length; line++)
+            {
+                string algLine = algorithmLines[line];
+
+                int comment = algorithmLines[line].IndexOf("//");
+                if (comment > -1)
+                    algLine = algorithmLines[line].Remove(comment);
+
+                if (!drawAlgorithmLine(algLine, line))
+                    return Error.algorithmError(line);
+
+                if (Block.allBlocks.ContainsKey(line + 1))
+                    if (Block.allBlocks[line + 1].skipThisBlock)
+                        line = Block.allBlocks[line + 1].endLine;
+
+                line = Loop.returnLoop(line);
+            }
+
+            return true;
+        }
+
+
     }
 }
