@@ -318,8 +318,8 @@ namespace graph.math
                 );
             }
 
-            else if (Var.isIncrement(algorithmLine))
-                return Var.Increment(varName, algorithmLine);
+            else if (Var.isIncDecrement(algorithmLine))
+                return Var.IncrementDecrement(varName, algorithmLine);
 
             else if (Var.isVariable(algorithmLine))
                 return Var.createNewVar(varName, algorithmLine);

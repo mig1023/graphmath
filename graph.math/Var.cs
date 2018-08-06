@@ -32,13 +32,15 @@ namespace graph.math
             return true;
         }
 
-        public static bool Increment(string varName, string value)
+        public static bool IncrementDecrement(string varName, string value)
         {
-            Match condition = Regexp.Check(@"\+\=\s*([0-9]+)\s*\n?\r?$", value, param: true);
+            Match condition = Regexp.Check(@"(\+|\-)\=\s*([0-9]+)\s*\n?\r?$", value, param: true);
+
+            int change = (condition.Groups[1].Value == "-" ? -1 : 1);
 
             if (allVars.ContainsKey(varName))
             {
-                allVars[varName].Value += Double.Parse(condition.Groups[1].Value);
+                allVars[varName].Value += Double.Parse(condition.Groups[2].Value) * change;
                 return true;
             }
 
@@ -47,15 +49,15 @@ namespace graph.math
 
         public static bool isVariable(string algorithmLine)
         {
-            if (Regexp.Check(@"=\s*[0-9]+\s*\n?\r?$", algorithmLine))
+            if (Regexp.Check(@"=\s*\-?\s*[0-9]+\s*\n?\r?$", algorithmLine))
                 return true;
             else
                 return false;
         }
 
-        public static bool isIncrement(string algorithmLine)
+        public static bool isIncDecrement(string algorithmLine)
         {
-            if (Regexp.Check(@"\+\=\s*[0-9]+\s*\n?\r?$", algorithmLine))
+            if (Regexp.Check(@"(\+|\-)\=\s*[0-9]+\s*\n?\r?$", algorithmLine))
                 return true;
             else
                 return false;
@@ -87,7 +89,7 @@ namespace graph.math
 
                 int startPos = 0;
 
-                if (isIncrement(algorithmLine) || isVariable(algorithmLine))
+                if (isIncDecrement(algorithmLine) || isVariable(algorithmLine))
                     startPos = algorithmLine.IndexOf("=");
 
                 foreach (int index in allIndexOf(algorithmLine, arrayKey))
