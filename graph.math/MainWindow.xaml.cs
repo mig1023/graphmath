@@ -83,6 +83,14 @@ namespace graph.math
             moveGraphPlace = false;
         }
 
+        private void graphPlace_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+                Slider.IncreaseLarge.Execute(null, graphScale);
+            else
+                Slider.DecreaseLarge.Execute(null, graphScale);
+        }
+
         private void graphText_MouseDown(object sender, MouseButtonEventArgs e)
         {
             graphText.SelectionBrush = hightlightText;
@@ -109,5 +117,6 @@ namespace graph.math
             double graphScaleTop = graphText.Height + graphText.Margin.Top + 12;
             graphScale.Margin = new Thickness(8, graphScaleTop, 12, 8);
         }
+
     }
 }

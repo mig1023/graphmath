@@ -19,7 +19,7 @@
 
             <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Width="2"
                       VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="#FF007ACC"></GridSplitter>
-            <Canvas x:Name="graphPlace" ClipToBounds="True" Grid.Row="0" Cursor="Hand" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF333333" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged" MouseDown="graphPlace_MouseDown" MouseMove="graphPlace_MouseMove" MouseUp="graphPlace_MouseUp" MouseLeave="graphPlace_MouseLeave"/>
+            <Canvas x:Name="graphPlace" ClipToBounds="True" Grid.Row="0" Cursor="Hand" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="#FF333333" Loaded="graphPlace_Loaded" SizeChanged="graphPlace_SizeChanged" MouseDown="graphPlace_MouseDown" MouseMove="graphPlace_MouseMove" MouseUp="graphPlace_MouseUp" MouseLeave="graphPlace_MouseLeave" MouseWheel="graphPlace_MouseWheel"/>
             <TextBox x:Name="graphText" AcceptsReturn="True" AcceptsTab="True" Grid.Column="2" HorizontalAlignment="Stretch" Margin="10,71,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="#FF3E3E42" Foreground="White" BorderBrush="{x:Null}" PreviewMouseDown="graphText_MouseDown" Height="280"/>
             <Slider x:Name="graphScale" Grid.Column="2" Maximum="100" Minimum="1" Value="10" TickFrequency="100" TickPlacement="BottomRight" Margin="8,362,12,8" Foreground="#FF3E3E42" Background="{x:Null}" ValueChanged="graphScale_ValueChanged"/>
 
